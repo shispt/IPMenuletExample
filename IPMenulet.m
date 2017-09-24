@@ -39,15 +39,21 @@
 	// Title as Image + String
     NSImage * menuIcon = [NSImage imageNamed:@"MenuletIcon"];
     [_statusItem setImage:menuIcon];
-	[_statusItem setTitle:@"000"];
+	[_statusItem setTitle:@"unknown"];
 }
 
 - (IBAction) updateIPAddress:(id)sender
 {
     NSString *ipAddress = [NSString stringWithContentsOfURL:[NSURL URLWithString:
-                                                             @"http://highearthorbit.com/service/myip.php"] encoding:NSASCIIStringEncoding error:nil];
+                                                             @"https://ipinfo.io/json"] encoding:NSASCIIStringEncoding error:nil];
     if (ipAddress != nil) {
-		[_statusItem setTitle:ipAddress];
+        NSData *data = [ipAddress dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *result = [NSJSONSerialization JSONObjectWithData:data
+                                                               options:0
+                                                                 error:nil];
+        if (result) {
+            _statusItem.title = [result objectForKey:@"ip"];
+        }
     }
 }
 
